@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Windows.Forms;
 
-// petit jambon
+// petit
 
 namespace EigenfacesForRecognition
 {
@@ -239,6 +239,11 @@ namespace EigenfacesForRecognition
         }
 
         private void textBox1_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void MainForm_Load(object sender, EventArgs e)
         {
 
         }
