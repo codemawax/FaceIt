@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Windows.Forms;
 
+// petit jambon
+
 namespace EigenfacesForRecognition
 {
     public partial class MainForm : Form
@@ -234,6 +236,11 @@ namespace EigenfacesForRecognition
 
             for (int i = 1; i <= MP; i++)
                 textBox1.Text += Format(val[i], f) + "\r\n";
+        }
+
+        private void textBox1_TextChanged(object sender, EventArgs e)
+        {
+
         }
     }
 }
