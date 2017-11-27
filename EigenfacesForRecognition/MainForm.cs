@@ -9,6 +9,7 @@ namespace EigenfacesForRecognition
     {
         private PGMImage avgImage;
         private PGMImage[] image;
+        private PGMImage subjectImage;
 
         public MainForm()
         {
@@ -33,7 +34,7 @@ namespace EigenfacesForRecognition
             int N1 = (int)numericUpDown1.Value;
             int N2 = (int)numericUpDown2.Value;
             int M = N1 * N2, MP = N1, count = 0;
-            string baseName = "att_faces";
+            string baseName = "Database";
 
             image = new PGMImage[M];
 
@@ -236,6 +237,29 @@ namespace EigenfacesForRecognition
 
             for (int i = 1; i <= MP; i++)
                 textBox1.Text += Format(val[i], f) + "\r\n";
+
+            //Stream myStream = null;
+            OpenFileDialog openFileDialog1 = new OpenFileDialog();
+
+            openFileDialog1.InitialDirectory = "c:\\";
+            openFileDialog1.Filter = "PGM files (*.pgm)|*.pgm";
+            openFileDialog1.FilterIndex = 2;
+            openFileDialog1.RestoreDirectory = true;
+
+            if (openFileDialog1.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            {
+                System.IO.StreamReader sr = new
+                   System.IO.StreamReader(openFileDialog1.FileName);
+                MessageBox.Show(sr.ReadToEnd());
+                sr.Close();
+
+                //PictureBox PictureBox1 = new PictureBox();
+                //PictureBox1.Image = new PGMImage(openFileDialog1.FileName);
+                //this.Controls.Add(PictureBox1);
+            }
+
+            //df = new DrawForm(subjectImage);
+            //df.Show();
         }
 
         private void textBox1_TextChanged(object sender, EventArgs e)
