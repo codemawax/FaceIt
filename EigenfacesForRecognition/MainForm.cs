@@ -236,6 +236,21 @@ namespace EigenfacesForRecognition
 
             for (int i = 1; i <= MP; i++)
                 textBox1.Text += Format(val[i], f) + "\r\n";
+
+            DistanceComputation distanceComputation = new DistanceComputation(10, 10);
+            double[] distances;
+            distances = new double[N1];
+
+            double[] eigenVectors;
+
+            eigenVectors = new double[];
+
+            int k;
+            for (k = 0; k < N1; k++)
+            {
+                distances = distanceComputation.ComputeDistance(avgImage, subjectImage, eigenVectors)
+            }
+
         }
 
         private void textBox1_TextChanged(object sender, EventArgs e)
