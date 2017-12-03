@@ -32,7 +32,7 @@ namespace EigenfacesForRecognition
             int N1 = (int)numericUpDown1.Value;
             int N2 = (int)numericUpDown2.Value;
             int M = N1 * N2, MP = N1, count = 0;
-            string baseName = "Database";
+            string baseName = "att_faces";
 
             image = new PGMImage[M];
 
@@ -270,7 +270,6 @@ namespace EigenfacesForRecognition
             {
                 //distances[k] = distanceComputation.ComputeDistance(avgImage, subjectImage, eigenVectors);
             }
-
         }
 
         private void TextBox1_TextChanged(object sender, EventArgs e)

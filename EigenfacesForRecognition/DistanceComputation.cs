@@ -10,7 +10,7 @@ namespace EigenfacesForRecognition
 
         // Allocate ?
         private PGMImage[] m_eigenFaces;
-        private PGMImage m_diffImage, m_reconstructedEigenImage;
+        private PGMImage m_diffImage, m_reconstructedEigenImage, m_normalizedReconstructedEigenImage;
 
         public DistanceComputation(int height, int width)
         {
@@ -24,49 +24,41 @@ namespace EigenfacesForRecognition
        * @param eigenVectors
        * @param diffMatrix
        */
-        private void ComputeEigenFaces(double[] ai_eigenVectors)
+        private void ComputeEigenFaces(double[] ai_eigenVectors, PGMImage[] ao_eigenFaces)
         {
             m_imageCount = ai_eigenVectors.Length;
-            m_rank = ai_eigenVectors.Length; // Get height
+            m_rank = ai_eigenVectors.Length; // real value ?
 
             int n, k, i, j;
 
             for (n = 0; n < m_rank; n++)
             {
-                for (k = 0; k < m_eigenFaceCount; k++)
+
+                double sumSquare = 0.0F;
+                for (i = 0; i < m_height; i++)
                 {
-                    double sumSquare = 0.0F;
-                    for (i = 0; i < m_height; i++)
+                    for (j = 0; j < m_width; j++)
                     {
-                        for (j = 0; j < m_width; j++)
+
+                        double eigenFacePixel = 0.0F;
+                        for (k = 0; k < m_eigenFaceCount; k++)
                         {
-                            sumSquare += (byte)(m_diffImage.Raster[i, j] * ai_eigenVectors[k]);
+                            eigenFacePixel += (byte)(m_diffImage.Raster[i, j] * ai_eigenVectors[k]);
                         }
+                        ao_eigenFaces[n].Raster[i, j] = (byte)eigenFacePixel;
+                        sumSquare += (byte)(Math.Pow(eigenFacePixel, 2));
+                    }
+                }
+                double norm = Math.Sqrt(sumSquare);
+                for (i = 0; i < m_height; i++)
+                {
+                    for (j = 0; j < m_width; j++)
+                    {
+                        ao_eigenFaces[n].Raster[i, j] = (byte)(ao_eigenFaces[n].Raster[i, j] / norm);
                     }
                 }
             }
-
-
-//        (0 to(rank - 1)).foreach {
-//                i =>
-//var sumSquare = 0.0
-//(0 to(pixelCount - 1)).foreach {
-//                    j =>
-//(0 to(imageCount - 1)).foreach {
-//                        k =>
-//eigenFaces(j)(i) += diffMatrix(j)(k) * eigenVectors.get(i, k)
-//        }
-//                    sumSquare += eigenFaces(j)(i) * eigenFaces(j)(i)
-//      }
-//                var norm = Math.sqrt(sumSquare)
-//                (0 to(pixelCount - 1)).foreach {
-//                    j =>
-//eigenFaces(j)(i) /= norm
-//                }
-//            }
-//            val eigenFacesMatrix = new DenseDoubleMatrix2D(pixelCount, rank)
-//        eigenFacesMatrix.assign(eigenFaces)
-      }
+        }
 
         /**
          * Calculates a distance score between a mean Pixels/EigenFaces model in comparison to an image subject.
@@ -77,7 +69,7 @@ namespace EigenfacesForRecognition
         public double ComputeDistance(PGMImage ai_avgImage, PGMImage ai_subjectImage, double[] ai_eigenVectors)
         {
             ComputeDiffImage(ai_subjectImage, ai_avgImage);
-            ComputeEigenFaces(ai_eigenVectors);
+            ComputeEigenFaces(ai_eigenVectors, m_eigenFaces);
             ComputeWeights();
             ReconstructImageWithEigenFaces(ai_avgImage);
             return ComputeImageDistance(ai_subjectImage, m_reconstructedEigenImage);
@@ -104,8 +96,6 @@ namespace EigenfacesForRecognition
 
         /**
          * Computes the weights of faces vs. EigenFaces.
-         * @param diffImagePixels
-         * @param eigenFaces
          */
         private void ComputeWeights()
         {
@@ -149,6 +139,14 @@ namespace EigenfacesForRecognition
         private void ReconstructImageWithEigenFaces(PGMImage ai_avgImage)
         {
             int k, i, j;
+            for (i = 0; i < m_height; i++)
+            {
+                for (j = 0; j < m_width; j++)
+                {
+                    m_reconstructedEigenImage.Raster[i, j] = 0;
+                }
+            }
+
             for (k = 0; k < m_eigenFaceCount; k++)
             {
                 m_weights[k] = 0.0F;
@@ -169,30 +167,26 @@ namespace EigenfacesForRecognition
                 }
             }
 
-            // TODO normalize
+            double min = double.MaxValue;
+            double max = double.MinValue;
 
+            for (i = 0; i < m_height; i++)
+            {
+                for (j = 0; j < m_width; j++)
+                {
+                    min = Math.Min(min, m_reconstructedEigenImage.Raster[i, j]);
+                    max = Math.Max(max, m_reconstructedEigenImage.Raster[i, j]);
+                }
+            }
 
-//            var min = Double.MaxValue
-//    var max = -Double.MaxValue
-//    (0 to(reconstructedPixels.length - 1)).foreach {
-//                i =>
-//min = Math.min(min, reconstructedPixels(i))
-//      max = Math.max(max, reconstructedPixels(i))
-//    }
-
-//            val normalizedReconstructedPixels = new Array[Double](pixelCount)
-//            (0 to(reconstructedPixels.length - 1)).foreach {
-//                i =>
-//normalizedReconstructedPixels(i) = (255.0 * (reconstructedPixels(i) - min)) / (max - min)
-//            }
-//            normalizedReconstructedPixels
-
-
-  }
-
-
-
-}
-
+            for (i = 0; i < m_height; i++)
+            {
+                for (j = 0; j < m_width; j++)
+                {
+                    m_normalizedReconstructedEigenImage.Raster[i, j] = (byte)(255.0 * (m_reconstructedEigenImage.Raster[i, j] - min) / (max - min));
+                }
+            }
+        }
+    }
 }
 
