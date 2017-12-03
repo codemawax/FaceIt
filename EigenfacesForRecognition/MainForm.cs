@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Windows.Forms;
 
-// petit
-
 namespace EigenfacesForRecognition
 {
     public partial class MainForm : Form
@@ -238,7 +236,6 @@ namespace EigenfacesForRecognition
             for (int i = 1; i <= MP; i++)
                 textBox1.Text += Format(val[i], f) + "\r\n";
 
-<<<<<<< HEAD
             //Stream myStream = null;
             OpenFileDialog openFileDialog1 = new OpenFileDialog();
 
@@ -261,25 +258,22 @@ namespace EigenfacesForRecognition
 
             //df = new DrawForm(subjectImage);
             //df.Show();
-=======
             DistanceComputation distanceComputation = new DistanceComputation(10, 10);
             double[] distances;
             distances = new double[N1];
 
             double[] eigenVectors;
 
-            eigenVectors = new double[];
+            eigenVectors = new double[N2]; // taille ?
 
-            int k;
-            for (k = 0; k < N1; k++)
+            for (int k = 0; k < N1; k++)
             {
-                distances = distanceComputation.ComputeDistance(avgImage, subjectImage, eigenVectors)
+                //distances[k] = distanceComputation.ComputeDistance(avgImage, subjectImage, eigenVectors);
             }
 
->>>>>>> 003449ab2e675bfe4aa72c489ab6e16929a14432
         }
 
-        private void textBox1_TextChanged(object sender, EventArgs e)
+        private void TextBox1_TextChanged(object sender, EventArgs e)
         {
 
         }

@@ -3,8 +3,6 @@ using EigenfacesForRecognition;
 
 namespace EigenfacesForRecognition
 {
-
-
     public class DistanceComputation
     {
         private int m_height, m_width, m_pixelCount, m_imageCount, m_rank, m_eigenFaceCount;
