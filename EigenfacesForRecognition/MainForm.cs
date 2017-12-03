@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Drawing;
 using System.Windows.Forms;
 
 namespace EigenfacesForRecognition
@@ -236,29 +237,39 @@ namespace EigenfacesForRecognition
             for (int i = 1; i <= MP; i++)
                 textBox1.Text += Format(val[i], f) + "\r\n";
 
-            //Stream myStream = null;
-            OpenFileDialog openFileDialog1 = new OpenFileDialog();
+            //Choix et affichage de l'image que l'on va tester  (Non fonctionnel : n'affiche pas l'image)
 
-            openFileDialog1.InitialDirectory = "c:\\";
-            openFileDialog1.Filter = "PGM files (*.pgm)|*.pgm";
-            openFileDialog1.FilterIndex = 2;
-            openFileDialog1.RestoreDirectory = true;
+            subjectImage = new PGMImage(avgRaster, h, m, w);
 
-            if (openFileDialog1.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            OpenFileDialog openFileDialog1 = new OpenFileDialog
             {
-                System.IO.StreamReader sr = new
-                   System.IO.StreamReader(openFileDialog1.FileName);
-                MessageBox.Show(sr.ReadToEnd());
-                sr.Close();
+                InitialDirectory = "c:\\",
+                Filter = "PGM files (*.pgm)|*.pgm|All Files (*.*)|*.*",
+                FilterIndex = 2,
+                RestoreDirectory = true
+            };
 
-                //PictureBox PictureBox1 = new PictureBox();
-                //PictureBox1.Image = new PGMImage(openFileDialog1.FileName);
-                //this.Controls.Add(PictureBox1);
-            }
+            if (openFileDialog1.ShowDialog() == DialogResult.OK)
+            {
+                    try
+                    {
+                        PictureBox PictureBox2 = new PictureBox();
+                        PictureBox2.Image = new Bitmap(openFileDialog1.FileName);
+                        // Add the new control to its parent's controls collection
+                        this.Controls.Add(PictureBox2);
+                    }
+                catch (Exception ex)
+                {
+                MessageBox.Show("Error loading image : " + ex.Message);
+                }
 
-            //df = new DrawForm(subjectImage);
-            //df.Show();
-            DistanceComputation distanceComputation = new DistanceComputation(10, 10);
+
+
+
+
+
+
+                DistanceComputation distanceComputation = new DistanceComputation(10, 10);
             double[] distances;
             distances = new double[N1];
 
