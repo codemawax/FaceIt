@@ -8,7 +8,6 @@ namespace EigenfacesForRecognition
     {
         private PGMImage avgImage;
         private PGMImage[] image;
-        private PGMImage[] subjectImage;
 
         public MainForm()
         {
@@ -247,15 +246,15 @@ namespace EigenfacesForRecognition
                 RestoreDirectory = true
             };
 
-            PGMImage[] subjectImage = new PGMImage[M];
+            PGMImage subjectImage = new PGMImage(avgRaster, h, m, w);
 
             if (openFileDialog1.ShowDialog() == DialogResult.OK)
             {
                 PGMFileInput input = new PGMFileInput();
 
-                if (input.ReadPGMFile(openFileDialog1.FileName, out subjectImage[count++]))
+                if (input.ReadPGMFile(openFileDialog1.FileName, out subjectImage))
                 {
-                    df = new DrawForm(personNumber, faceNumber, avgImage, subjectImage);
+                    df = new DrawForm(personNumber, faceNumber, subjectImage, image);
                     df.Show();
                 }
             }
