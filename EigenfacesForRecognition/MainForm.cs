@@ -8,7 +8,7 @@ namespace EigenfacesForRecognition
     {
         private PGMImage avgImage;
         private PGMImage[] image;
-        private PGMImage[] subjectImage;
+        private PGMImage subjectImage;
 
         public MainForm()
         {
@@ -202,7 +202,7 @@ namespace EigenfacesForRecognition
             EigenVV evv = new EigenVV(phiRaster, M, h, m, w);
             double[,] vec;
             double[] val = evv.FindEigenValuesVectors(out vec, out count);
-            Console.WriteLine(val.Length);
+
             string f = "E6";
 
             if (count != 0)
@@ -240,7 +240,7 @@ namespace EigenfacesForRecognition
 
             //Choix et affichage de l'image que l'on va tester  (Non fonctionnel : n'affiche pas l'image)
 
-            PGMImage[] subjectImage = new PGMImage[M];
+            subjectImage = new PGMImage(avgRaster, h, m, w);
 
             OpenFileDialog openFileDialog1 = new OpenFileDialog
             {
@@ -255,13 +255,21 @@ namespace EigenfacesForRecognition
            
             }
 
-            DistanceComputation distanceComputation = new DistanceComputation(10, 10);
+            DistanceComputation distanceComputation = new DistanceComputation(h, w);
             double[] distances;
             distances = new double[personNumber];
 
             double[] eigenVectors;
 
-            eigenVectors = new double[faceNumber]; // taille ?
+            eigenVectors = new double[M];
+
+            Console.WriteLine(M);
+            Console.WriteLine(val.Length);
+
+            for (int i = 1; i < val.Length; i++)
+            {
+                eigenVectors[i-1] =  val[i];
+            }
 
             for (int k = 0; k < personNumber; k++)
             {
