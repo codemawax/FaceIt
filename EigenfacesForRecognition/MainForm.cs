@@ -9,6 +9,8 @@ namespace EigenfacesForRecognition
         private PGMImage avgImage;
         private PGMImage[] image;
         private PGMImage subjectImage;
+=======
+>>>>>>> e15d6defa82b4810855b4561c6ededc54cce4aef
 
         public MainForm()
         {
@@ -238,9 +240,12 @@ namespace EigenfacesForRecognition
             for (int i = 1; i <= MP; i++)
                 textBox1.Text += Format(val[i], f) + "\r\n";
 
+<<<<<<< HEAD
             //Choix et affichage de l'image que l'on va tester  (Non fonctionnel : n'affiche pas l'image)
 
             subjectImage = new PGMImage(avgRaster, h, m, w);
+=======
+>>>>>>> e15d6defa82b4810855b4561c6ededc54cce4aef
 
             OpenFileDialog openFileDialog1 = new OpenFileDialog
             {
@@ -250,9 +255,17 @@ namespace EigenfacesForRecognition
                 RestoreDirectory = true
             };
 
+            PGMImage subjectImage = new PGMImage(avgRaster, h, m, w);
+
             if (openFileDialog1.ShowDialog() == DialogResult.OK)
             {
-           
+                PGMFileInput input = new PGMFileInput();
+
+                if (input.ReadPGMFile(openFileDialog1.FileName, out subjectImage))
+                {
+                    df = new DrawForm(personNumber, faceNumber, subjectImage, image);
+                    df.Show();
+                }
             }
 
             DistanceComputation distanceComputation = new DistanceComputation(h, w);
