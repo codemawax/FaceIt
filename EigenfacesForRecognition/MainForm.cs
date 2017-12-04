@@ -186,7 +186,7 @@ namespace EigenfacesForRecognition
             }
 
             byte[,] raster = new byte[h, w];
-            
+
             for (int i = 0; i < M; i++)
             {
                 for (int j = 0; j < h; j++)
@@ -251,25 +251,20 @@ namespace EigenfacesForRecognition
 
             if (openFileDialog1.ShowDialog() == DialogResult.OK)
             {
-                    try
-                    {
-                        PictureBox PictureBox2 = new PictureBox();
-                        PictureBox2.Image = new Bitmap(openFileDialog1.FileName);
-                        // Add the new control to its parent's controls collection
-                        this.Controls.Add(PictureBox2);
-                    }
+                try
+                {
+                    PictureBox PictureBox2 = new PictureBox();
+                    PictureBox2.Image = new Bitmap(openFileDialog1.FileName);
+                    // Add the new control to its parent's controls collection
+                    this.Controls.Add(PictureBox2);
+                }
                 catch (Exception ex)
                 {
-                MessageBox.Show("Error loading image : " + ex.Message);
+                    MessageBox.Show("Error loading image : " + ex.Message);
                 }
+            }
 
-
-
-
-
-
-
-                DistanceComputation distanceComputation = new DistanceComputation(10, 10);
+            DistanceComputation distanceComputation = new DistanceComputation(10, 10);
             double[] distances;
             distances = new double[N1];
 
