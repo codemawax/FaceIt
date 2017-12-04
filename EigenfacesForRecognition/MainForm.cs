@@ -8,7 +8,7 @@ namespace EigenfacesForRecognition
     {
         private PGMImage avgImage;
         private PGMImage[] image;
-        private PGMImage subjectImage;
+        private PGMImage[] subjectImage;
 
         public MainForm()
         {
@@ -186,7 +186,7 @@ namespace EigenfacesForRecognition
             }
 
             byte[,] raster = new byte[h, w];
-            
+
             for (int i = 0; i < M; i++)
             {
                 for (int j = 0; j < h; j++)
@@ -239,7 +239,7 @@ namespace EigenfacesForRecognition
 
             //Choix et affichage de l'image que l'on va tester  (Non fonctionnel : n'affiche pas l'image)
 
-            subjectImage = new PGMImage(avgRaster, h, m, w);
+            PGMImage[] subjectImage = new PGMImage[M];
 
             OpenFileDialog openFileDialog1 = new OpenFileDialog
             {
@@ -251,16 +251,16 @@ namespace EigenfacesForRecognition
 
             if (openFileDialog1.ShowDialog() == DialogResult.OK)
             {
-                    try
-                    {
-                        PictureBox PictureBox2 = new PictureBox();
-                        PictureBox2.Image = new Bitmap(openFileDialog1.FileName);
-                        // Add the new control to its parent's controls collection
-                        this.Controls.Add(PictureBox2);
-                    }
+                try
+                {
+                    PictureBox PictureBox2 = new PictureBox();
+                    PictureBox2.Image = new Bitmap(openFileDialog1.FileName);
+                    // Add the new control to its parent's controls collection
+                    this.Controls.Add(PictureBox2);
+                }
                 catch (Exception ex)
                 {
-                MessageBox.Show("Error loading image : " + ex.Message);
+                    MessageBox.Show("Error loading image : " + ex.Message);
                 }
 
 
@@ -270,27 +270,27 @@ namespace EigenfacesForRecognition
 
 
                 DistanceComputation distanceComputation = new DistanceComputation(10, 10);
-            double[] distances;
-            distances = new double[N1];
+                double[] distances;
+                distances = new double[N1];
 
-            double[] eigenVectors;
+                double[] eigenVectors;
 
-            eigenVectors = new double[N2]; // taille ?
+                eigenVectors = new double[N2]; // taille ?
 
-            for (int k = 0; k < N1; k++)
+                for (int k = 0; k < N1; k++)
+                {
+                    //distances[k] = distanceComputation.ComputeDistance(avgImage, subjectImage, eigenVectors);
+                }
+            }
+
+            private void TextBox1_TextChanged(object sender, EventArgs e)
             {
-                //distances[k] = distanceComputation.ComputeDistance(avgImage, subjectImage, eigenVectors);
+
+            }
+
+            private void MainForm_Load(object sender, EventArgs e)
+            {
+
             }
         }
-
-        private void TextBox1_TextChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void MainForm_Load(object sender, EventArgs e)
-        {
-
-        }
     }
-}
