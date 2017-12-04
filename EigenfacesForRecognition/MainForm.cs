@@ -30,18 +30,18 @@ namespace EigenfacesForRecognition
 
         private void button1_Click(object sender, EventArgs e)
         {
-            int N1 = (int)numericUpDown1.Value;
-            int N2 = (int)numericUpDown2.Value;
-            int M = N1 * N2, MP = N1, count = 0;
+            int personNumber = (int)numericUpDown1.Value;
+            int faceNumber = (int)numericUpDown2.Value;
+            int M = personNumber * faceNumber, MP = personNumber, count = 0;
             string baseName = "att_faces";
 
             image = new PGMImage[M];
 
-            for (int i = 0; i < N1; i++)
+            for (int i = 0; i < personNumber; i++)
             {
                 string dirName = baseName + "\\" + "s" + (i + 1).ToString() + "\\";
 
-                for (int j = 0; j < N2; j++)
+                for (int j = 0; j < faceNumber; j++)
                 {
                     string fileName = dirName + (j + 1).ToString() + ".pgm";
                     PGMFileInput input = new PGMFileInput();
@@ -128,7 +128,7 @@ namespace EigenfacesForRecognition
 
             avgImage = new PGMImage(avgRaster, h, m, w);
 
-            DrawForm df = new DrawForm(N1, N2, avgImage, image);
+            DrawForm df = new DrawForm(personNumber, faceNumber, avgImage, image);
 
             df.Show();
 
@@ -196,12 +196,13 @@ namespace EigenfacesForRecognition
                 phi[i] = new PGMImage(raster, h, m, w);
             }
 
-            df = new DrawForm(N1, N2, avgImage, phi);
+            df = new DrawForm(personNumber, faceNumber, avgImage, phi);
             df.Show();
 
             EigenVV evv = new EigenVV(phiRaster, M, h, m, w);
             double[,] vec;
             double[] val = evv.FindEigenValuesVectors(out vec, out count);
+            Console.WriteLine(val.Length);
             string f = "E6";
 
             if (count != 0)
@@ -251,46 +252,24 @@ namespace EigenfacesForRecognition
 
             if (openFileDialog1.ShowDialog() == DialogResult.OK)
             {
-                try
-                {
-                    PictureBox PictureBox2 = new PictureBox();
-                    PictureBox2.Image = new Bitmap(openFileDialog1.FileName);
-                    // Add the new control to its parent's controls collection
-                    this.Controls.Add(PictureBox2);
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show("Error loading image : " + ex.Message);
-                }
+           
             }
 
-<<<<<<< HEAD
             DistanceComputation distanceComputation = new DistanceComputation(10, 10);
             double[] distances;
-            distances = new double[N1];
-=======
+            distances = new double[personNumber];
 
+            double[] eigenVectors;
 
+            eigenVectors = new double[faceNumber]; // taille ?
 
-
-
-
-                DistanceComputation distanceComputation = new DistanceComputation(10, 10);
-                double[] distances;
-                distances = new double[N1];
->>>>>>> e0ae4a9e7e6bfa9f8bfc64dba2c6e8d5a2f4366a
-
-                double[] eigenVectors;
-
-                eigenVectors = new double[N2]; // taille ?
-
-                for (int k = 0; k < N1; k++)
-                {
-                    //distances[k] = distanceComputation.ComputeDistance(avgImage, subjectImage, eigenVectors);
-                }
+            for (int k = 0; k < personNumber; k++)
+            {
+                //distances[k] = distanceComputation.ComputeDistance(avgImage, subjectImage, eigenVectors);
             }
+        }
 
-            private void TextBox1_TextChanged(object sender, EventArgs e)
+        private void TextBox1_TextChanged(object sender, EventArgs e)
             {
 
             }
