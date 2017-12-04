@@ -8,7 +8,7 @@ namespace EigenfacesForRecognition
     {
         private PGMImage avgImage;
         private PGMImage[] image;
-        private PGMImage subjectImage;
+        private PGMImage[] subjectImage;
 
         public MainForm()
         {
@@ -239,7 +239,7 @@ namespace EigenfacesForRecognition
 
             //Choix et affichage de l'image que l'on va tester  (Non fonctionnel : n'affiche pas l'image)
 
-            subjectImage = new PGMImage(avgRaster, h, m, w);
+            PGMImage[] subjectImage = new PGMImage[M];
 
             OpenFileDialog openFileDialog1 = new OpenFileDialog
             {
@@ -264,28 +264,40 @@ namespace EigenfacesForRecognition
                 }
             }
 
+<<<<<<< HEAD
             DistanceComputation distanceComputation = new DistanceComputation(10, 10);
             double[] distances;
             distances = new double[N1];
+=======
 
-            double[] eigenVectors;
 
-            eigenVectors = new double[N2]; // taille ?
 
-            for (int k = 0; k < N1; k++)
+
+
+
+                DistanceComputation distanceComputation = new DistanceComputation(10, 10);
+                double[] distances;
+                distances = new double[N1];
+>>>>>>> e0ae4a9e7e6bfa9f8bfc64dba2c6e8d5a2f4366a
+
+                double[] eigenVectors;
+
+                eigenVectors = new double[N2]; // taille ?
+
+                for (int k = 0; k < N1; k++)
+                {
+                    //distances[k] = distanceComputation.ComputeDistance(avgImage, subjectImage, eigenVectors);
+                }
+            }
+
+            private void TextBox1_TextChanged(object sender, EventArgs e)
             {
-                //distances[k] = distanceComputation.ComputeDistance(avgImage, subjectImage, eigenVectors);
+
+            }
+
+            private void MainForm_Load(object sender, EventArgs e)
+            {
+
             }
         }
-
-        private void TextBox1_TextChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void MainForm_Load(object sender, EventArgs e)
-        {
-
-        }
     }
-}
