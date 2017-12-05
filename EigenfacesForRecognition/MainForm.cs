@@ -260,7 +260,7 @@ namespace EigenfacesForRecognition
                 }
             }
 
-            DistanceComputation distanceComputation = new DistanceComputation(h, w);
+            DistanceComputation distanceComputation = new DistanceComputation(h, w, m);
             double[] distances;
             distances = new double[personNumber];
 
@@ -273,9 +273,22 @@ namespace EigenfacesForRecognition
                 eigenVectors[i-1] =  val[i];
             }
 
+
+            for (int i = 1; i < M; i++)
+            {
+                for (int k = 1; k <= M - count; k++)
+                {
+                    Console.Write(vec[i, k] + "   ");
+                }
+                Console.Write(Environment.NewLine + Environment.NewLine);
+            }
+
+            Console.WriteLine(M);
+            Console.WriteLine(M - count);
+
             for (int k = 0; k < personNumber; k++)
             {
-                //distances[k] = distanceComputation.ComputeDistance(avgImage, subjectImage, eigenVectors);
+                //distances[k] = distanceComputation.ComputeDistance(phi, avgImage, subjectImage, vec);
             }
         }
 

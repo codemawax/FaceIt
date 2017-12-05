@@ -10,42 +10,56 @@ namespace EigenfacesForRecognition
 
         // Allocate ?
         private PGMImage[] m_eigenFaces;
-        private PGMImage m_diffImage, m_reconstructedEigenImage, m_normalizedReconstructedEigenImage;
+        private PGMImage m_avgImage, m_diffImage, m_reconstructedEigenImage, m_normalizedReconstructedEigenImage;
 
-        public DistanceComputation(int height, int width)
+        public DistanceComputation(int height, int width, int m)
         {
             this.m_height = height;
             this.m_width = width;
             this.m_pixelCount = height * width;
+
+            byte[,] raster = new byte[height, width];
+            m_avgImage = new PGMImage(raster, height, m, width);
+            m_diffImage = new PGMImage(raster, height, m, width);
         }
 
         /**
+ * Computes the EigenFaces matrix using a pixel matrix of multiple images.
+ * @param pixelMatrix
+ * @param meanColumn
+ */
+        //      def computeEigenFaces(pixelMatrix: Array[Array[Double]], meanColumn: Array[Double]): DoubleMatrix2D = {
+        //  val diffMatrix = MatrixHelpers.computeDifferenceMatrixPixels(pixelMatrix, meanColumn)
+        //  val eigenVectors = MatrixHelpers.computeEigenVectors(diffMatrix)
+        //  computeEigenFaces(eigenVectors, diffMatrix)
+        //}
+     
+        /**
        * Computes the EigenFaces matrix for a dataset of Eigen vectors and a diff matrix.
-       * @param eigenVectors
-       * @param diffMatrix
        */
-        private void ComputeEigenFaces(double[] ai_eigenVectors, PGMImage[] ao_eigenFaces)
+        private void ComputeEigenFaces(PGMImage[] ai_diffImages, double[,] ai_eigenVectors)
         {
             m_imageCount = ai_eigenVectors.Length;
-            m_rank = ai_eigenVectors.Length; // real value ?
+            m_rank = ai_eigenVectors.Length; // get height
+            m_eigenFaceCount = ai_eigenVectors.Length; 
 
             int n, k, i, j;
 
             for (n = 0; n < m_rank; n++)
             {
-
                 double sumSquare = 0.0F;
+
                 for (i = 0; i < m_height; i++)
                 {
                     for (j = 0; j < m_width; j++)
                     {
-
                         double eigenFacePixel = 0.0F;
                         for (k = 0; k < m_eigenFaceCount; k++)
                         {
-                            eigenFacePixel += (byte)(m_diffImage.Raster[i, j] * ai_eigenVectors[k]);
+                            Console.WriteLine("face " + k);
+                            eigenFacePixel += (byte)(ai_diffImages[k].Raster[i, j] * ai_eigenVectors[n, k]);
                         }
-                        ao_eigenFaces[n].Raster[i, j] = (byte)eigenFacePixel;
+                        m_eigenFaces[n].Raster[i, j] = (byte)eigenFacePixel;
                         sumSquare += (byte)(Math.Pow(eigenFacePixel, 2));
                     }
                 }
@@ -54,7 +68,7 @@ namespace EigenfacesForRecognition
                 {
                     for (j = 0; j < m_width; j++)
                     {
-                        ao_eigenFaces[n].Raster[i, j] = (byte)(ao_eigenFaces[n].Raster[i, j] / norm);
+                        m_eigenFaces[n].Raster[i, j] = (byte)(m_eigenFaces[n].Raster[i, j] / norm);
                     }
                 }
             }
@@ -62,14 +76,11 @@ namespace EigenfacesForRecognition
 
         /**
          * Calculates a distance score between a mean Pixels/EigenFaces model in comparison to an image subject.
-         * @param meanPixels
-         * @param eigenFaces
-         * @param subjectPixels
          */
-        public double ComputeDistance(PGMImage ai_avgImage, PGMImage ai_subjectImage, double[] ai_eigenVectors)
+        public double ComputeDistance(PGMImage[] ai_diffImages, PGMImage ai_avgImage, PGMImage ai_subjectImage, double[,] ai_eigenVectors)
         {
-            ComputeDiffImage(ai_subjectImage, ai_avgImage);
-            ComputeEigenFaces(ai_eigenVectors, m_eigenFaces);
+            ComputeDiffImage(ref ai_subjectImage, ref ai_avgImage, ref m_diffImage);
+            ComputeEigenFaces(ai_diffImages, ai_eigenVectors);
             ComputeWeights();
             ReconstructImageWithEigenFaces(ai_avgImage);
             return ComputeImageDistance(ai_subjectImage, m_reconstructedEigenImage);
@@ -77,8 +88,6 @@ namespace EigenfacesForRecognition
 
         /**
          * Computes the distance between two images.
-         * @param pixels1
-         * @param pixels2
          */
         private double ComputeImageDistance(PGMImage ai_image1, PGMImage ai_image2)
         {
@@ -115,26 +124,21 @@ namespace EigenfacesForRecognition
 
         /**
          * Computes the difference pixels between a subject image and a mean image.
-         * @param subjectPixels
-         * @param meanPixels
          */
-        private void ComputeDiffImage(PGMImage ai_subjectImage, PGMImage ai_avgImage)
+        private void ComputeDiffImage(ref PGMImage ai_subjectImage, ref PGMImage ai_avgImage, ref PGMImage ao_diffImage)
         {
             int i, j;
             for (i = 0; i < m_height; i++)
             {
                 for (j = 0; j < m_width; j++)
                 {
-                    m_diffImage.Raster[i, j] = (byte)(ai_subjectImage.Raster[i, j] - ai_avgImage.Raster[i, j]);
+                    ao_diffImage.Raster[i, j] = (byte)(ai_subjectImage.Raster[i, j] - ai_avgImage.Raster[i, j]);
                 }
             }
         }
 
         /**
          * Reconstructs an image using Eigen Faces and weights.
-         * @param weights
-         * @param eigenFaces
-         * @param meanPixels
          */
         private void ReconstructImageWithEigenFaces(PGMImage ai_avgImage)
         {
