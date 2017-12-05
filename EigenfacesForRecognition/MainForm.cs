@@ -255,8 +255,8 @@ namespace EigenfacesForRecognition
 
                 if (input.ReadPGMFile(openFileDialog1.FileName, out subjectImage))
                 {
-                    df = new DrawForm(personNumber, faceNumber, subjectImage, image);
-                    df.Show();
+                    FaceItForm fif = new FaceItForm(personNumber, faceNumber, subjectImage);
+                    fif.Show();
                 }
             }
 
