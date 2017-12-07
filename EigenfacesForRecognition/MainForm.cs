@@ -127,9 +127,9 @@ namespace EigenfacesForRecognition
 
             avgImage = new PGMImage(avgRaster, h, m, w);
 
-            DrawForm df = new DrawForm(personNumber, faceNumber, avgImage, image);
+           DrawForm df = new DrawForm(personNumber, faceNumber, avgImage, image);
 
-            df.Show();
+            // df.Show();
 
             byte[,,] phiRaster;
             PGMImage[] phi = new PGMImage[M];
@@ -237,28 +237,7 @@ namespace EigenfacesForRecognition
             for (int i = 1; i <= MP; i++)
                 textBox1.Text += Format(val[i], f) + "\r\n";
 
-            //Choix et affichage de l'image que l'on va tester  (Non fonctionnel : n'affiche pas l'image)
-
-            OpenFileDialog openFileDialog1 = new OpenFileDialog
-            {
-                InitialDirectory = "c:\\",
-                Filter = "PGM files (*.pgm)|*.pgm|All Files (*.*)|*.*",
-                FilterIndex = 2,
-                RestoreDirectory = true
-            };
-
-            PGMImage subjectImage = new PGMImage(avgRaster, h, m, w);
-
-            if (openFileDialog1.ShowDialog() == DialogResult.OK)
-            {
-                PGMFileInput input = new PGMFileInput();
-
-                if (input.ReadPGMFile(openFileDialog1.FileName, out subjectImage))
-                {
-                    FaceItForm fif = new FaceItForm(personNumber, faceNumber, subjectImage);
-                    fif.Show();
-                }
-            }
+            
 
             DistanceComputation distanceComputation = new DistanceComputation(h, w, m);
             double[] distances;
@@ -292,7 +271,128 @@ namespace EigenfacesForRecognition
             }
         }
 
-        private void TextBox1_TextChanged(object sender, EventArgs e)
+        private void button2_Click(object sender, EventArgs e)
+        {
+
+            int personNumber = (int)numericUpDown1.Value;
+            int faceNumber = (int)numericUpDown2.Value;
+            int M = personNumber * faceNumber, MP = personNumber, count = 0;
+            string baseName = "att_faces";
+
+            image = new PGMImage[M];
+
+            for (int i = 0; i < personNumber; i++)
+            {
+                string dirName = baseName + "\\" + "s" + (i + 1).ToString() + "\\";
+
+                for (int j = 0; j < faceNumber; j++)
+                {
+                    string fileName = dirName + (j + 1).ToString() + ".pgm";
+                    PGMFileInput input = new PGMFileInput();
+
+                    if (input.ReadPGMFile(fileName, out image[count++]))
+                    {
+
+                    }
+                }
+            }
+
+            int h = image[0].H, m = image[0].M, w = image[0].W, m1 = m + 1;
+            byte[,] avgRaster;
+            long[,] lar;
+
+            if (m < 256)
+            {
+                avgRaster = new byte[h, w];
+                lar = new long[h, w];
+
+                for (int i = 0; i < M; i++)
+                    for (int j = 0; j < h; j++)
+                        for (int k = 0; k < w; k++)
+                            lar[j, k] += image[i].Raster[j, k];
+
+                for (int i = 0; i < M; i++)
+                {
+                    for (int j = 0; j < h; j++)
+                    {
+                        for (int k = 0; k < w; k++)
+                        {
+                            long r = lar[j, k] / M;
+
+                            avgRaster[j, k] = (byte)r;
+                        }
+                    }
+                }
+            }
+
+            else
+            {
+                avgRaster = new byte[h, 2 * w];
+                lar = new long[h, 2 * w];
+
+                for (int i = 0; i < M; i++)
+                {
+                    for (int j = 0; j < h; j++)
+                    {
+                        for (int k = 0; k < w; k++)
+                        {
+                            long rh = image[i].Raster[j, k + 0];
+                            long rl = image[i].Raster[j, k];
+                            long r = 256 * rh + rl;
+
+                            lar[j, k] += r;
+                        }
+                    }
+                }
+
+                for (int i = 0; i < M; i++)
+                    for (int j = 0; j < h; j++)
+                        for (int k = 0; k < w; k++)
+                            lar[j, k] /= M;
+
+                for (int i = 0; i < M; i++)
+                {
+                    for (int j = 0; j < h; j++)
+                    {
+                        for (int k = 0; k < w; k += 2)
+                        {
+                            long srh = image[i].Raster[j, k + 0];
+                            long srl = image[i].Raster[j, k + 1];
+                            long sr = 256 * srh + srl;
+                            long r = (lar[j, k] + sr) % m1;
+
+                            srh = r / 256;
+                            srl = r % 256;
+                            avgRaster[j, k + 0] = (byte)srh;
+                            avgRaster[j, k + 1] = (byte)srl;
+                        }
+                    }
+                }
+            }
+
+            OpenFileDialog openFileDialog1 = new OpenFileDialog
+            {
+                InitialDirectory = "c:\\",
+                Filter = "PGM files (*.pgm)|*.pgm|All Files (*.*)|*.*",
+                FilterIndex = 2,
+                RestoreDirectory = true
+            };
+
+            PGMImage subjectImage = new PGMImage(avgRaster, h, m, w);
+
+            if (openFileDialog1.ShowDialog() == DialogResult.OK)
+            {
+                PGMFileInput input = new PGMFileInput();
+
+                if (input.ReadPGMFile(openFileDialog1.FileName, out subjectImage))
+                {
+                    FaceItForm fif = new FaceItForm(personNumber, faceNumber, subjectImage);
+                    fif.Show();
+                }
+            }
+
+        }
+            private void TextBox1_TextChanged(object sender, EventArgs e)
             {
 
             }
